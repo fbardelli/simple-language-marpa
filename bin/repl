@@ -1,0 +1,21 @@
+#!/usr/bin/env perl
+use Marpa::R2;
+use SimpleLang::Grammar;
+use SimpleLang::Actions;
+
+while (<>) {
+  my $rec = Marpa::R2::Scanless::R->new({
+    grammar => $SimpleLang::Grammar::grammar,
+	semantics_package => 'SimpleLang::Actions' 
+  });
+
+  $rec->read(\$_);
+  my $ret = $rec->value();
+  if (defined $ret) {
+	$$ret->evaluate();
+  } else {
+    print STDERR "Parse error\n";;
+  }
+}
+
+

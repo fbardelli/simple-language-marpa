@@ -1,0 +1,3 @@
+runtime: perl516
+
+run_repl: rock run perl bin/repl

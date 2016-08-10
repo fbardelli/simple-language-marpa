@@ -2,17 +2,24 @@
 use Marpa::R2;
 use SimpleLang::Grammar;
 use SimpleLang::Actions;
+use Term::ReadLine;
+use Term::ANSIColor;
+my $prompt = color('reset').">: ";
+my $term = Term::ReadLine->new('SimpleLang REPL');
+my $OUT = $term->OUT || \*STDOUT;
 
-while (<>) {
+
+while ( defined( $_ = $term->readline($prompt) )) {
   my $rec = Marpa::R2::Scanless::R->new({
     grammar => $SimpleLang::Grammar::grammar,
-	semantics_package => 'SimpleLang::Actions' 
+    semantics_package => 'SimpleLang::Actions' 
   });
 
   $rec->read(\$_);
   my $ret = $rec->value();
   if (defined $ret) {
-	$$ret->evaluate();
+    print colored(['green'],$$ret->evaluate(),"\n");
+    $term->addhistory($_) if /\S/;
   } else {
     print STDERR "Parse error\n";;
   }
